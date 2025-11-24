@@ -1,6 +1,6 @@
 COMPREHENSIVE FAIRNESS AUDIT REPORT: COMPAS RECIDIVISM ALGORITHM
 
-Generated on: December 1, 2024
+Generated on: November 24, 2025
 Audit Version: 1.0
 Audit Team: Safari Group
 
