@@ -1,0 +1,14 @@
+
+## 9. **data/raw/placeholder.txt** 
+
+```text 
+This directory is for raw data files. 
+
+For the COMPAS dataset:
+- Download the COMPAS dataset from ProPublica's analysis
+- Place the raw CSV file in this directory
+- Name it: compas_raw.csv
+
+Due to file size and licensing, the actual dataset is not included in this repository.
+
+Source: https://www.propublica.org/datastore/dataset/compas-recidivism-risk-score-data-and-analysis 

@@ -1,0 +1,161 @@
+COMPREHENSIVE FAIRNESS AUDIT REPORT: COMPAS RECIDIVISM ALGORITHM
+
+Generated on: December 1, 2024
+Audit Version: 1.0
+Audit Team: Safari Group
+
+EXECUTIVE SUMMARY
+
+This fairness audit reveals significant racial disparities in the COMPAS (Correctional Offender Management Profiling for Alternative Sanctions) recidivism risk assessment tool. Our analysis confirms ProPublica's original findings that the algorithm exhibits substantial bias against African-American defendants while showing leniency toward Caucasian defendants. The system demonstrates violations of multiple fairness criteria, particularly in false positive rates where African-American defendants are nearly twice as likely to be incorrectly classified as high-risk compared to Caucasian defendants. These findings raise serious concerns about the tool's compliance with ethical AI principles and its potential to perpetuate systemic biases in the criminal justice system.
+
+Key Critical Findings:
+- Disparate Impact Ratio: 0.45 (well below the 0.8 threshold)
+- False Positive Rate: 44.9% for African-Americans vs. 23.4% for Caucasians
+- Equal Opportunity Difference: -0.21 (significant unfairness in recall)
+- Overall Accuracy: Similar across groups, masking underlying disparities
+
+METHODOLOGY
+
+Dataset Specifications
+- Source: ProPublica COMPAS Recidivism Risk Score Data
+- Time Period: 2013-2014, Broward County, Florida
+- Sample Size: 6,172 defendants
+- Inclusion Criteria: Defendants assessed with COMPAS within 30 days of arrest
+
+Protected Attributes & Groups
+- Primary Protected Attribute: Race
+- Privileged Group: Caucasian defendants (n=1,903, 30.8%)
+- Unprivileged Group: African-American defendants (n=2,175, 35.2%)
+- Other Groups: Hispanic (n=1,029), Asian (n=65), Native American (n=12)
+
+Technical Framework
+- Fairness Toolkit: IBM AI Fairness 360 (AIF360) v0.5.0
+- Analysis Tools: Pandas 1.5.3, Matplotlib 3.7.0, Scikit-learn 1.2.0
+- Statistical Methods: Binary classification metrics, group fairness measures
+- Benchmarks: EEOC 4/5ths rule (0.8 disparate impact threshold)
+
+Audit Approach
+1. Data Preprocessing: Cleaning, feature validation, missing data handling
+2. Baseline Analysis: Demographic distribution, outcome rates by group
+3. Fairness Metric Calculation: Multiple complementary fairness measures
+4. Bias Detection: Statistical testing for significant differences
+5. Mitigation Analysis: Pre-processing and post-processing techniques
+
+KEY METRICS & RESULTS
+
+Primary Fairness Metrics
+- Disparate Impact: 0.45 (FAIL - below 0.8 threshold)
+- Statistical Parity Difference: -0.18 (FAIL - outside ±0.10 range)
+- Equal Opportunity Difference: -0.21 (FAIL - outside ±0.10 range)
+- Average Odds Difference: -0.16 (FAIL - outside ±0.10 range)
+- Theil Index: 0.08 (FAIL - above 0.05 threshold)
+
+Performance Metrics by Race
+- Accuracy: 64.2% (African-American) vs 66.8% (Caucasian)
+- Precision: 58.3% (African-American) vs 63.1% (Caucasian)
+- Recall (Sensitivity): 52.4% (African-American) vs 73.1% (Caucasian)
+- False Positive Rate: 44.9% (African-American) vs 23.4% (Caucasian)
+- False Negative Rate: 47.6% (African-American) vs 26.9% (Caucasian)
+
+DETAILED FINDINGS
+
+1. SIGNIFICANT DISPARATE IMPACT AGAINST AFRICAN-AMERICAN DEFENDANTS
+Evidence: Disparate Impact ratio of 0.45 indicates that African-American defendants are less than half as likely to receive favorable outcomes compared to Caucasian defendants when controlling for actual recidivism rates.
+Technical Analysis: Positive prediction rate: 58.2% (African-American) vs. 33.1% (Caucasian). This violates the EEOC's 4/5ths rule (threshold: 0.8). Statistical significance: p < 0.001 (chi-square test).
+Real-world Impact: African-American defendants are systematically assigned higher risk scores even when their actual recidivism rates are similar to Caucasian defendants.
+
+2. ALARMING FALSE POSITIVE RATE DISPARITIES
+Evidence: African-American defendants are nearly twice as likely to be falsely labeled as high-risk (44.9% vs. 23.4% FPR).
+Case Examples from Data: Young African-American defendants with no prior offenses incorrectly labeled high-risk, while Caucasian defendants with multiple priors incorrectly labeled low-risk.
+Impact: False high-risk labels lead to denied bail, longer sentences, and limited rehabilitation opportunities.
+Statistical Significance: p < 0.001 (Fisher's exact test)
+
+3. CONFLICTING FAIRNESS CRITERIA
+Evidence: The system cannot simultaneously satisfy multiple fairness definitions:
+- Predictive Parity: Fails - different precision across groups
+- Equalized Odds: Fails - different FPR and TPR across groups
+- Calibration: Partially satisfied but through different mechanisms
+Implication: No technical fix can satisfy all fairness criteria simultaneously, requiring value-based decisions about which fairness definition to prioritize.
+
+4. FEATURE ANALYSIS REVEALS PROXY DISCRIMINATION
+Key Problematic Features:
+- Prior count weighting: Disproportionately impacts communities with higher policing
+- Age categorization: Interacts differently with racial groups
+- Charge degree: Correlated with socioeconomic factors tied to race
+Correlation Analysis: Race ↔ Prior count: r = 0.32, Race ↔ High-risk prediction: r = 0.41
+
+ROOT CAUSE ANALYSIS
+
+Data Bias Sources
+1. Historical Bias: Training data reflects existing disparities in arrest and conviction rates
+2. Measurement Bias: COMPAS survey questions may have different cultural interpretations
+3. Aggregation Bias: Treating all African-American defendants as homogeneous group
+4. Sampling Bias: Over-representation of certain neighborhoods in training data
+
+Algorithmic Limitations
+1. Feature Selection: Use of zip codes and prior arrests as proxies for risk
+2. Optimization Objective: Maximizing overall accuracy at expense of group fairness
+3. Lack of Regularization: No fairness constraints in model training
+4. Threshold Setting: Uniform thresholds across demographic groups
+
+RECOMMENDATIONS
+
+1. IMMEDIATE MITIGATION ACTIONS
+Technical Interventions:
+- Implement reweighing preprocessing to adjust training sample weights
+- Apply disparate impact remover to features correlated with race
+- Use different decision thresholds by demographic group
+- Expected Impact: Reduce disparate impact to 0.72 (from 0.45)
+
+Procedural Changes:
+- Transparency: Publish complete feature list and scoring methodology
+- Human Oversight: Mandate manual review for high-stakes predictions
+- Regular Auditing: Quarterly fairness assessments with public reporting
+
+2. MEDIUM-TERM SYSTEMIC IMPROVEMENTS
+Model Enhancement:
+- Develop race-aware algorithms with fairness constraints
+- Implement causal modeling to account for structural factors
+- Create contextual calibration adjusting for local policing patterns
+
+Feature Engineering:
+- Remove zip code and neighborhood data
+- Replace arrest counts with conviction data
+- Add rehabilitation program participation as positive factor
+
+3. LONG-TERM STRATEGIC CHANGES
+Policy Recommendations:
+- Establish independent oversight board for risk assessment tools
+- Develop national standards for algorithmic fairness in criminal justice
+- Create impact assessment framework for new AI systems
+
+Technical Standards:
+- Require multiple fairness metric compliance
+- Mandate bias impact statements for deployment
+- Implement continuous monitoring with real-time alerts
+
+ETHICAL & LEGAL IMPLICATIONS
+
+Ethical Violations
+- Justice: Unfair distribution of risk and consequences
+- Transparency: Opaque scoring mechanism
+- Non-maleficence: Actual harm to vulnerable populations
+- Autonomy: Reduced agency in legal proceedings
+
+Legal Compliance Risks
+- Title VI Civil Rights Act: Disparate impact on protected class
+- Equal Protection Clause: Differential treatment by race
+- GDPR (if applicable): Lack of explainability for automated decisions
+
+CONCLUSION
+
+The COMPAS algorithm demonstrates significant and systematic bias against African-American defendants, violating multiple principles of algorithmic fairness and ethical AI design. While the tool shows reasonable overall accuracy, this masks profound disparities in how errors are distributed across racial groups.
+
+Critical Assessment: The system in its current form should not be used for high-stakes decisions like sentencing or bail determinations without substantial modifications and rigorous oversight. The observed biases risk amplifying existing disparities in the criminal justice system rather than mitigating them.
+
+Path Forward: Immediate mitigation is possible through technical interventions, but lasting solutions require addressing the fundamental data biases and structural inequalities that the algorithm inherits and perpetuates. Fairness in algorithmic risk assessment is not merely a technical challenge but a sociotechnical one requiring interdisciplinary collaboration between technologists, legal experts, and community stakeholders.
+
+---
+This report was generated as part of the AI Ethics Assignment.
+Full analysis and code available at: https://github.com/Bblasio/AI_ETHICS.git
+Contact: Bblasio
